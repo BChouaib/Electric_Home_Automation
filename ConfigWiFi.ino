@@ -10,6 +10,7 @@ char pass[30] ;
 void setUpWIFI(){
   readSsidAndPassEEPROM();
   while(!wifi.joinAP(ssid,pass,DEFAULT_PATTERN)){
+    delay(10000);
     configWIFI();
     writeSsidAndPassEEPROM();
   }
@@ -38,6 +39,7 @@ void readSsidAndPassEEPROM() {
 //create html page (192.168.4.1) to config the wifi
 //this methode block until wifi config is done (page saveed showed up)
 void configWIFI() {
+  EspSerial.readString();
   wifi.enableMUX();
   wifi.startServer(80);
   while (true) {
@@ -52,8 +54,8 @@ void configWIFI() {
             break;
           }
         }
-        wifi.send(0, "<!DOCTYPE html> <html> <style> input[type=text], select { width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer; } div { padding: 20px; } </style> <body> <h3>Wifi configuration</h3> <div> <form action=\"/\"> SSID <input type=\"text\" name=\"ssid\" placeholder=\"Your SSID..\"> <br> PASS <input type=\"text\"name=\"pass\" placeholder=\"Your Password..\"> <br><br> <input type=\"submit\" value=\"Save\"> </form> </div> </body> </html>"
-                  , 661);
+        wifi.send(0, "<!DOCTYPE html> <html> <style> input[type=text], select { width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer; } div { padding: 20px; } body{ margin: auto; width: 40%;} </style> <body> <h3>Wifi configuration</h3> <div> <form action=\"/\"> SSID <input type=\"text\" name=\"ssid\" placeholder=\"Your SSID..\"> <br> PASS <input type=\"text\"name=\"pass\" placeholder=\"Your Password..\"> <br><br> <input type=\"submit\" value=\"Save\"> </form> </div> </body> </html>"
+                  , 694);
         wifi.releaseTCP(0);
       }
     }
