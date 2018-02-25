@@ -8,8 +8,10 @@ char pass[30] ;
 //  - try to join to the AP 
 //  - if failed it will call configWIFI() and save new ssid and pass into EEPROM for th next join (after power off the arduino) 
 void setUpWIFI(){
+  wifi.setEcho(0);
+  wifi.enableMUX();
   readSsidAndPassEEPROM();
-  while(!wifi.joinAP(ssid,pass,DEFAULT_PATTERN)){
+  while(!wifi.joinAP(ssid,pass)){
     delay(10000);
     configWIFI();
     writeSsidAndPassEEPROM();
@@ -39,8 +41,7 @@ void readSsidAndPassEEPROM() {
 //create html page (192.168.4.1) to config the wifi
 //this methode block until wifi config is done (page saveed showed up)
 void configWIFI() {
-  EspSerial.readString();
-  wifi.enableMUX();
+  wifi.setOprToSoftAP();
   wifi.startServer(80);
   while (true) {
     if (EspSerial.available()) {
@@ -54,13 +55,16 @@ void configWIFI() {
             break;
           }
         }
-        wifi.send(0, "<!DOCTYPE html> <html> <style> input[type=text], select { width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer; } div { padding: 20px; } body{ margin: auto; width: 40%;} </style> <body> <h3>Wifi configuration</h3> <div> <form action=\"/\"> SSID <input type=\"text\" name=\"ssid\" placeholder=\"Your SSID..\"> <br> PASS <input type=\"text\"name=\"pass\" placeholder=\"Your Password..\"> <br><br> <input type=\"submit\" value=\"Save\"> </form> </div> </body> </html>"
-                  , 694);
-        wifi.releaseTCP(0);
+        //This is commented for reason of limited memory of the Arduino Uno 
+        //wifi.send(0, "<!DOCTYPE html> <html> <style> input[type=text], select { width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer; } div { padding: 20px; } body{ margin: auto; width: 40%;} </style> <body> <h3>Wifi configuration</h3> <div> <form action=\"/\"> SSID <input type=\"text\" name=\"ssid\" placeholder=\"Your SSID..\"> <br> PASS <input type=\"text\"name=\"pass\" placeholder=\"Your Password..\"> <br><br> <input type=\"submit\" value=\"Save\"> </form> </div> </body> </html>"
+        //          , 694);
+        //wifi.releaseTCP(0);
       }
     }
   }
   wifi.stopServer();
-  wifi.disableMUX();
+  wifi.setOprToStation();
+  wifi.restart();
+  wifi.enableMUX();
 }
 
