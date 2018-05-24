@@ -1,17 +1,15 @@
-
-
 char ssid[30] ;
 char pass[30] ;
 
 //this methode
 //  - read ssid and pass from EEPROM
-//  - try to join to the AP 
-//  - if failed it will call configWIFI() and save new ssid and pass into EEPROM for th next join (after power off the arduino) 
-void setUpWIFI(){
+//  - try to join to the AP
+//  - if failed it will call configWIFI() and save new ssid and pass into EEPROM for th next join (after power off the arduino)
+void setUpWiFi() {
   wifi.setEcho(0);
   wifi.enableMUX();
   readSsidAndPassEEPROM();
-  while(!wifi.joinAP(ssid,pass)){
+  while (!wifi.joinAP(ssid, pass)) {
     delay(10000);
     configWIFI();
     writeSsidAndPassEEPROM();
@@ -55,7 +53,7 @@ void configWIFI() {
             break;
           }
         }
-        //This is commented for reason of limited memory of the Arduino Uno 
+        //This is commented for reason of limited memory of the Arduino Uno
         //wifi.send(0, "<!DOCTYPE html> <html> <style> input[type=text], select { width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; } input[type=submit] { width: 100%; background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; border-radius: 4px; cursor: pointer; } div { padding: 20px; } body{ margin: auto; width: 40%;} </style> <body> <h3>Wifi configuration</h3> <div> <form action=\"/\"> SSID <input type=\"text\" name=\"ssid\" placeholder=\"Your SSID..\"> <br> PASS <input type=\"text\"name=\"pass\" placeholder=\"Your Password..\"> <br><br> <input type=\"submit\" value=\"Save\"> </form> </div> </body> </html>"
         //          , 694);
         //wifi.releaseTCP(0);
